@@ -1,4 +1,4 @@
-include ./.env
+-include ./.env
 
 MIGRATION_PATH=db/migration
 

@@ -24,7 +24,6 @@ jobs:
           POSTGRES_USER: ${{ vars.DB_USER}}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASS}}
           POSTGRES_DB: ${{ vars.DB_NAME}}
-          DB_URL: postgres://${{ vars.DB_USER }}:${{ secrets.DB_PASS }}@${{ vars.DB_HOST}}:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?sslmode=disable
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -48,6 +47,8 @@ jobs:
         which migrate
 
     - name: Run migrations
+      env:
+        DB_URL: postgres://${{ vars.DB_USER }}:${{ secrets.DB_PASS }}@${{ vars.DB_HOST}}:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?sslmode=disable
       run: make migrate-up
 
     - name: Test
