@@ -1,3 +1,4 @@
 .env
 NOTES.md
 .air.toml
+.DS_Store
