@@ -19,7 +19,7 @@ jobs:
       postgres:
         image: postgres:18.3-alpine
         ports:
-          - 5432:5432
+          - ${{ vars.DB_PORT }}:5432
         env:
           POSTGRES_USER: ${{ vars.DB_USER}}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASS}}
