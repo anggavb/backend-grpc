@@ -31,6 +31,12 @@ jobs:
           --health-retries 5
     steps:
 
+    - name: Generate env file
+      run: |
+        touch app.env
+        echo "SERVER_ADDRESS=${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PORT }}" > app.env
+        echo "DB_SOURCE=postgres://${{ vars.DB_USER }}:${{ secrets.DB_PASS }}@${{ vars.DB_HOST}}:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?sslmode=disable" >> app.env
+
     - name: Set up Go
       uses: actions/setup-go@v6
       with:
@@ -47,8 +53,6 @@ jobs:
         which migrate
 
     - name: Run migrations
-      env:
-        DB_URL: postgres://${{ vars.DB_USER }}:${{ secrets.DB_PASS }}@${{ vars.DB_HOST}}:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?sslmode=disable
       run: make migrate-up
 
     - name: Test
