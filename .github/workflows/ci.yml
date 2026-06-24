@@ -31,12 +31,6 @@ jobs:
           --health-retries 5
     steps:
 
-    - name: Generate env file
-      run: |
-        touch app.env
-        echo "SERVER_ADDRESS=${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PORT }}" > app.env
-        echo "DB_SOURCE=postgres://${{ vars.DB_USER }}:${{ secrets.DB_PASS }}@${{ vars.DB_HOST}}:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?sslmode=disable" >> app.env
-
     - name: Set up Go
       uses: actions/setup-go@v6
       with:
@@ -51,6 +45,12 @@ jobs:
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.19.1/migrate.linux-amd64.tar.gz | tar xvz
         sudo mv migrate /usr/bin/migrate
         which migrate
+
+    - name: Generate env file
+      run: |
+        touch app.env
+        echo "SERVER_ADDRESS=${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PORT }}" >> app.env
+        echo "DB_SOURCE=postgres://${{ vars.DB_USER }}:${{ secrets.DB_PASS }}@${{ vars.DB_HOST}}:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?sslmode=disable" >> app.env
 
     - name: Run migrations
       run: make migrate-up
