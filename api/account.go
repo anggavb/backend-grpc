@@ -1,12 +1,14 @@
 package api
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
 	db "github.com/anggavb/simplebank/db/sqlc"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type createAccountRequest struct {
@@ -32,6 +34,16 @@ func (server *Server) createAccount(c *gin.Context) {
 	account, err := server.store.CreateAccount(c, arg)
 	if err != nil {
 		log.Printf("Error creating account: %v", err)
+
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			switch pgErr.Code {
+			case "23503", "23505":
+				c.JSON(http.StatusForbidden, errorResponse(err))
+				return
+			}
+		}
+
 		c.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
