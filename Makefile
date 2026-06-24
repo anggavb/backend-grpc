@@ -23,4 +23,8 @@ test:
 server:
 	@go run main.go
 
-.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server
+mock:
+	@mockgen -package mockdb -destination db/mock/store.go github.com/anggavb/simplebank/db/sqlc Store
+	@echo "Mock generated successfully!"
+
+.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server mock
